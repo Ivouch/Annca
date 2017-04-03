@@ -511,8 +511,10 @@ public final class Camera2Manager extends BaseCameraManager<String, TextureView.
             StreamConfigurationMap map = currentCameraId.equals(faceBackCameraId) ? backCameraStreamConfigurationMap : frontCameraStreamConfigurationMap;
             if (configurationProvider.getMediaQuality() == AnncaConfiguration.MEDIA_QUALITY_AUTO) {
                 camcorderProfile = CameraHelper.getCamcorderProfile(currentCameraId, configurationProvider.getVideoFileSize(), configurationProvider.getMinimumVideoDuration());
-            } else
-                camcorderProfile = CameraHelper.getCamcorderProfile(configurationProvider.getMediaQuality(), currentCameraId);
+            } else {
+                camcorderProfile = CameraHelper.getCamcorderProfile(configurationProvider.getMediaQuality(),
+                                                                    currentCameraId);
+            }
 
             videoSize = CameraHelper.chooseOptimalSize(Size.fromArray2(map.getOutputSizes(MediaRecorder.class)),
                     windowSize.getWidth(), windowSize.getHeight(), new Size(camcorderProfile.videoFrameWidth, camcorderProfile.videoFrameHeight));

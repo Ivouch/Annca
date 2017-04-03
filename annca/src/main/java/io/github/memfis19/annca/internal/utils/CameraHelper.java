@@ -7,9 +7,9 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.media.CamcorderProfile;
 import android.os.Build;
-import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
+import io.github.memfis19.annca.internal.configuration.AnncaConfiguration;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -19,8 +19,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-
-import io.github.memfis19.annca.internal.configuration.AnncaConfiguration;
 
 /**
  * Created by memfis on 7/6/16.
@@ -72,25 +70,13 @@ public final class CameraHelper {
         }
     }
 
-    public static File getOutputMediaFile(Context context, @AnncaConfiguration.MediaAction int mediaAction) {
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), context.getPackageName());
-
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                Log.d(TAG, "Failed to create directory.");
-                return null;
-            }
-        }
-
+    public static File getOutputMediaFile(Context context, @AnncaConfiguration.MediaAction int mediaAction, File directory) {
         String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss").format(new Date());
         File mediaFile;
         if (mediaAction == AnncaConfiguration.MEDIA_ACTION_PHOTO) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "IMG_" + timeStamp + ".jpg");
+            mediaFile = new File(directory, "IMG_" + timeStamp + ".jpg");
         } else if (mediaAction == AnncaConfiguration.MEDIA_ACTION_VIDEO) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "VID_" + timeStamp + ".mp4");
+            mediaFile = new File(directory, "VID_" + timeStamp + ".mp4");
         } else {
             return null;
         }

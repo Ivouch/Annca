@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-
 import io.github.memfis19.annca.R;
 import io.github.memfis19.annca.internal.configuration.AnncaConfiguration;
 import io.github.memfis19.annca.internal.ui.model.PhotoQualityOption;
@@ -23,6 +22,8 @@ import io.github.memfis19.annca.internal.ui.view.MediaActionSwitchView;
 import io.github.memfis19.annca.internal.ui.view.RecordButton;
 import io.github.memfis19.annca.internal.utils.Size;
 import io.github.memfis19.annca.internal.utils.Utils;
+
+import java.io.File;
 
 /**
  * Created by memfis on 12/1/16.
@@ -294,14 +295,16 @@ public abstract class BaseAnncaActivity<CameraId> extends AnncaCameraActivity<Ca
         currentMediaActionState = mediaActionState;
     }
 
+    public abstract File getOutputDirectory();
+
     @Override
     public void onTakePhotoButtonPressed() {
-        getCameraController().takePhoto();
+        getCameraController().takePhoto(getOutputDirectory());
     }
 
     @Override
     public void onStartRecordingButtonPressed() {
-        getCameraController().startVideoRecord();
+        getCameraController().startVideoRecord(getOutputDirectory());
     }
 
     @Override
@@ -339,7 +342,6 @@ public abstract class BaseAnncaActivity<CameraId> extends AnncaCameraActivity<Ca
     public long getVideoFileSize() {
         return videoFileSize;
     }
-
 
     @Override
     public int getMinimumVideoDuration() {
@@ -388,6 +390,7 @@ public abstract class BaseAnncaActivity<CameraId> extends AnncaCameraActivity<Ca
     public void onVideoRecordStop() {
         cameraControlPanel.allowRecord(false);
         cameraControlPanel.onStopVideoRecord();
+
         startPreviewActivity();
     }
 
@@ -408,8 +411,7 @@ public abstract class BaseAnncaActivity<CameraId> extends AnncaCameraActivity<Ca
             if (requestCode == REQUEST_PREVIEW_CODE) {
                 if (PreviewActivity.isResultConfirm(data)) {
                     Intent resultIntent = new Intent();
-                    resultIntent.putExtra(AnncaConfiguration.Arguments.FILE_PATH,
-                            PreviewActivity.getMediaFilePatch(data));
+                    resultIntent.putExtra(AnncaConfiguration.Arguments.FILE_PATH, PreviewActivity.getMediaFilePatch(data));
                     setResult(RESULT_OK, resultIntent);
                     finish();
                 } else if (PreviewActivity.isResultCancel(data)) {

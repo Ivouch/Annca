@@ -107,7 +107,12 @@ abstract public class AnncaCameraActivity<CameraId> extends Activity
 
     private void setUserContent() {
         userContainer.removeAllViews();
-        userContainer.addView(getUserContentView(LayoutInflater.from(this), userContainer));
+
+        final View customView = getUserContentView(LayoutInflater.from(this), userContainer);
+
+        if(customView != null){
+            userContainer.addView(customView);
+        }
     }
 
     public final void setCameraPreview(View preview, Size previewSize) {

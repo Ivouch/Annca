@@ -18,15 +18,14 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.TextView;
-
-import java.io.File;
-
 import io.github.memfis19.annca.R;
 import io.github.memfis19.annca.internal.configuration.AnncaConfiguration;
 import io.github.memfis19.annca.internal.ui.BaseAnncaActivity;
 import io.github.memfis19.annca.internal.ui.view.AspectFrameLayout;
 import io.github.memfis19.annca.internal.utils.AnncaImageLoader;
 import io.github.memfis19.annca.internal.utils.Utils;
+
+import java.io.File;
 
 /**
  * Created by memfis on 7/6/16.

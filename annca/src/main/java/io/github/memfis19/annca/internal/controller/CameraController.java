@@ -1,11 +1,10 @@
 package io.github.memfis19.annca.internal.controller;
 
 import android.os.Bundle;
-
-import java.io.File;
-
 import io.github.memfis19.annca.internal.configuration.AnncaConfiguration;
 import io.github.memfis19.annca.internal.manager.CameraManager;
+
+import java.io.File;
 
 /**
  * Created by memfis on 7/6/16.
@@ -20,9 +19,9 @@ public interface CameraController<CameraId> {
 
     void onDestroy();
 
-    void takePhoto();
+    void takePhoto(File directory);
 
-    void startVideoRecord();
+    void startVideoRecord(File directory);
 
     void stopVideoRecord();
 

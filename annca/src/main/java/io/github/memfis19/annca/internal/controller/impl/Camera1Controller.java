@@ -4,9 +4,6 @@ import android.hardware.Camera;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceHolder;
-
-import java.io.File;
-
 import io.github.memfis19.annca.internal.configuration.AnncaConfiguration;
 import io.github.memfis19.annca.internal.configuration.ConfigurationProvider;
 import io.github.memfis19.annca.internal.controller.view.CameraView;
@@ -19,6 +16,8 @@ import io.github.memfis19.annca.internal.manager.listener.CameraVideoListener;
 import io.github.memfis19.annca.internal.ui.view.AutoFitSurfaceView;
 import io.github.memfis19.annca.internal.utils.CameraHelper;
 import io.github.memfis19.annca.internal.utils.Size;
+
+import java.io.File;
 
 /**
  * Created by memfis on 7/7/16.
@@ -65,14 +64,14 @@ public class Camera1Controller implements io.github.memfis19.annca.internal.cont
     }
 
     @Override
-    public void takePhoto() {
-        outputFile = CameraHelper.getOutputMediaFile(cameraView.getActivity(), AnncaConfiguration.MEDIA_ACTION_PHOTO);
+    public void takePhoto(File directory) {
+        outputFile = CameraHelper.getOutputMediaFile(cameraView.getActivity(), AnncaConfiguration.MEDIA_ACTION_PHOTO, directory);
         cameraManager.takePhoto(outputFile, this);
     }
 
     @Override
-    public void startVideoRecord() {
-        outputFile = CameraHelper.getOutputMediaFile(cameraView.getActivity(), AnncaConfiguration.MEDIA_ACTION_VIDEO);
+    public void startVideoRecord(File directory) {
+        outputFile = CameraHelper.getOutputMediaFile(cameraView.getActivity(), AnncaConfiguration.MEDIA_ACTION_VIDEO, directory);
         cameraManager.startVideoRecord(outputFile, this);
     }
 
