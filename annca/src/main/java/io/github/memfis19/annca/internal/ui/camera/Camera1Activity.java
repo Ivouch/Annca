@@ -7,6 +7,7 @@ import io.github.memfis19.annca.internal.configuration.ConfigurationProvider;
 import io.github.memfis19.annca.internal.controller.CameraController;
 import io.github.memfis19.annca.internal.controller.impl.Camera1Controller;
 import io.github.memfis19.annca.internal.controller.view.CameraView;
+import io.github.memfis19.annca.internal.manager.CameraManager;
 import io.github.memfis19.annca.internal.ui.BaseAnncaActivity;
 import io.github.memfis19.annca.internal.ui.model.PhotoQualityOption;
 import io.github.memfis19.annca.internal.ui.model.VideoQualityOption;
@@ -100,4 +101,9 @@ public class Camera1Activity extends BaseAnncaActivity<Integer> {
 
 		return mediaStorageDir;
 	}
+
+	public void requestPreviewFrame(CameraManager.IPreviewFrameListener previewFrameListener){
+		((Camera1Controller)getCameraController()).requestPreviewFrame(previewFrameListener);
+	}
+
 }

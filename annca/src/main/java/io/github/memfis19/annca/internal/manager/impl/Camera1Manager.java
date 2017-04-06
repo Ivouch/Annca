@@ -1,7 +1,12 @@
 package io.github.memfis19.annca.internal.manager.impl;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.PixelFormat;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.media.ExifInterface;
 import android.media.MediaRecorder;
@@ -10,13 +15,6 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.WindowManager;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.List;
-
 import io.github.memfis19.annca.internal.configuration.AnncaConfiguration;
 import io.github.memfis19.annca.internal.configuration.ConfigurationProvider;
 import io.github.memfis19.annca.internal.manager.listener.CameraCloseListener;
@@ -26,12 +24,19 @@ import io.github.memfis19.annca.internal.manager.listener.CameraVideoListener;
 import io.github.memfis19.annca.internal.utils.CameraHelper;
 import io.github.memfis19.annca.internal.utils.Size;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.List;
+
 /**
  * Created by memfis on 8/14/16.
  */
 @SuppressWarnings("deprecation")
 public class Camera1Manager extends BaseCameraManager<Integer, SurfaceHolder.Callback, Camera.Parameters, Camera>
-        implements SurfaceHolder.Callback, Camera.PictureCallback {
+        implements SurfaceHolder.Callback, Camera.PictureCallback, Camera.PreviewCallback {
 
     private static final String TAG = "Camera1Manager";
 
@@ -47,6 +52,8 @@ public class Camera1Manager extends BaseCameraManager<Integer, SurfaceHolder.Cal
     private CameraVideoListener videoListener;
     private CameraPhotoListener photoListener;
     private CameraOpenListener<Integer, SurfaceHolder.Callback> cameraOpenListener;
+
+    private IPreviewFrameListener mPreviewFrameListener;
 
     private Camera1Manager() {
 
@@ -322,6 +329,42 @@ public class Camera1Manager extends BaseCameraManager<Integer, SurfaceHolder.Cal
         }
     }
 
+    @Override
+    public void requestPreviewFrame(IPreviewFrameListener previewFrameListener){
+        mPreviewFrameListener = previewFrameListener;
+        camera.setOneShotPreviewCallback(Camera1Manager.this);
+    }
+
+    @Override
+    public void onPreviewFrame(byte[] data,
+                               Camera camera) {
+        if(!isVideoRecording) return;
+
+        if(mPreviewFrameListener != null){
+            Camera.Parameters parameters = camera.getParameters();
+            int width = parameters.getPreviewSize().width;
+            int height = parameters.getPreviewSize().height;
+
+            YuvImage yuv = new YuvImage(data, parameters.getPreviewFormat(), width, height, null);
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            yuv.compressToJpeg(new Rect(0, 0, width, height), 50, out);
+
+            byte[] bytes = out.toByteArray();
+            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+            int rotation = getImageRotation(configurationProvider.getSensorPosition());
+            if(rotation != 0){
+                Matrix matrix = new Matrix();
+                matrix.preRotate(rotation);
+
+				bitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
+            }
+
+            mPreviewFrameListener.onPreviewFrame(bitmap);
+        }
+    }
+
     //------------------------Implementation------------------
 
     private void startPreview(SurfaceHolder surfaceHolder) {
@@ -475,6 +518,17 @@ public class Camera1Manager extends BaseCameraManager<Integer, SurfaceHolder.Cal
         parameters.setPictureSize(photoSize.getWidth(), photoSize.getHeight());
 
         camera.setParameters(parameters);
+    }
+
+    protected int getImageRotation(@AnncaConfiguration.SensorPosition int sensorPosition){
+        int rotate;
+        if (currentCameraId.equals(faceFrontCameraId)) {
+            rotate = (360 + faceFrontCameraOrientation + configurationProvider.getDegrees()) % 360;
+        } else {
+            rotate = (360 + faceBackCameraOrientation - configurationProvider.getDegrees()) % 360;
+        }
+
+        return rotate;
     }
 
     @Override

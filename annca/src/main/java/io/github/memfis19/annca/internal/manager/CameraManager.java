@@ -1,9 +1,7 @@
 package io.github.memfis19.annca.internal.manager;
 
 import android.content.Context;
-
-import java.io.File;
-
+import android.graphics.Bitmap;
 import io.github.memfis19.annca.internal.configuration.AnncaConfiguration;
 import io.github.memfis19.annca.internal.configuration.ConfigurationProvider;
 import io.github.memfis19.annca.internal.manager.impl.CameraHandler;
@@ -13,6 +11,8 @@ import io.github.memfis19.annca.internal.manager.listener.CameraOpenListener;
 import io.github.memfis19.annca.internal.manager.listener.CameraPhotoListener;
 import io.github.memfis19.annca.internal.manager.listener.CameraVideoListener;
 import io.github.memfis19.annca.internal.utils.Size;
+
+import java.io.File;
 
 /**
  * Created by memfis on 8/14/16.
@@ -54,4 +54,10 @@ public interface CameraManager<CameraId, SurfaceListener, CameraParameters, Came
     boolean handleParameters(ParametersHandler<CameraParameters> parameters);
 
     void handleCamera(CameraHandler<Camera> cameraHandler);
+
+    void requestPreviewFrame(IPreviewFrameListener previewFrameListener);
+
+    interface IPreviewFrameListener {
+        void onPreviewFrame(Bitmap preview);
+    }
 }

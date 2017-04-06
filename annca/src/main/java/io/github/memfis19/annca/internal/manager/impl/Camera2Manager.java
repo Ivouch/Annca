@@ -391,6 +391,11 @@ public final class Camera2Manager extends BaseCameraManager<String, TextureView.
             });
     }
 
+    @Override
+    public void requestPreviewFrame(IPreviewFrameListener previewFrameListener) {
+        //texture view can be used in Camera2 API
+    }
+
     //--------------------Internal methods------------------
 
     private void startPreview(SurfaceTexture texture) {

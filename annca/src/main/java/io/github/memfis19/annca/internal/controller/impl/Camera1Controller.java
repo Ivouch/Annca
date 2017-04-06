@@ -85,6 +85,10 @@ public class Camera1Controller implements io.github.memfis19.annca.internal.cont
         return cameraManager.isVideoRecording();
     }
 
+    public void requestPreviewFrame(CameraManager.IPreviewFrameListener previewFrameListener){
+        cameraManager.requestPreviewFrame(previewFrameListener);
+    }
+
     @Override
     public void switchCamera(@AnncaConfiguration.CameraFace final int cameraFace) {
         currentCameraId = cameraManager.getCurrentCameraId().equals(cameraManager.getFaceFrontCameraId()) ?
