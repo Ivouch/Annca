@@ -36,6 +36,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
 
     private final static String MEDIA_ACTION_ARG = "media_action_arg";
     private final static String FILE_PATH_ARG = "file_path_arg";
+    private final static String FILE_TIMESTAMP_ARG = "file_timestamp_arg";
     private final static String RESPONSE_CODE_ARG = "response_code_arg";
     private final static String VIDEO_POSITION_ARG = "current_video_position";
     private final static String VIDEO_IS_PLAYED_ARG = "is_played";
@@ -44,6 +45,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
 
     private int mediaAction;
     private String previewFilePath;
+    private long previewTimestamp;
 
     private SurfaceView surfaceView;
     private FrameLayout photoPreviewContainer;
@@ -139,12 +141,13 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
 
     public static Intent newIntent(Context context,
                                    @AnncaConfiguration.MediaAction int mediaAction,
-                                   String filePath) {
+                                   String filePath,
+								   long timestamp) {
 
-        return new Intent(context, PreviewActivity.class)
-                .putExtra(MEDIA_ACTION_ARG, mediaAction)
-                .putExtra(FILE_PATH_ARG, filePath);
-    }
+		return new Intent(context, PreviewActivity.class).putExtra(MEDIA_ACTION_ARG, mediaAction)
+														 .putExtra(FILE_PATH_ARG, filePath)
+														 .putExtra(FILE_TIMESTAMP_ARG, timestamp);
+	}
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -210,6 +213,7 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
 
         mediaAction = args.getInt(MEDIA_ACTION_ARG);
         previewFilePath = args.getString(FILE_PATH_ARG);
+        previewTimestamp = args.getLong(FILE_TIMESTAMP_ARG, 0);
 
         if (mediaAction == AnncaConfiguration.MEDIA_ACTION_VIDEO) {
             displayVideo(savedInstanceState);
@@ -332,7 +336,9 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View view) {
         Intent resultIntent = new Intent();
         if (view.getId() == R.id.confirm_media_result) {
-            resultIntent.putExtra(RESPONSE_CODE_ARG, BaseAnncaActivity.ACTION_CONFIRM).putExtra(FILE_PATH_ARG, previewFilePath);
+            resultIntent.putExtra(RESPONSE_CODE_ARG, BaseAnncaActivity.ACTION_CONFIRM)
+						.putExtra(FILE_PATH_ARG, previewFilePath)
+						.putExtra(FILE_TIMESTAMP_ARG, previewTimestamp);
         } else if (view.getId() == R.id.re_take_media) {
             deleteMediaFile();
             resultIntent.putExtra(RESPONSE_CODE_ARG, BaseAnncaActivity.ACTION_RETAKE);
@@ -362,6 +368,10 @@ public class PreviewActivity extends AppCompatActivity implements View.OnClickLi
     public static String getMediaFilePatch(@NonNull Intent resultIntent) {
         return resultIntent.getStringExtra(FILE_PATH_ARG);
     }
+
+	public static long getMediaTimestamp(@NonNull Intent resultIntent) {
+		return resultIntent.getLongExtra(FILE_TIMESTAMP_ARG, 0);
+	}
 
     public static boolean isResultRetake(@NonNull Intent resultIntent) {
         return BaseAnncaActivity.ACTION_RETAKE == resultIntent.getIntExtra(RESPONSE_CODE_ARG, -1);

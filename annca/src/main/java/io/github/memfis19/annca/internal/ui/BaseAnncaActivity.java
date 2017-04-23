@@ -73,6 +73,8 @@ public abstract class BaseAnncaActivity<CameraId> extends AnncaCameraActivity<Ca
     @AnncaConfiguration.MediaQuality
     protected int newQuality = -1;
 
+    private long mStartTimestamp = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -299,11 +301,13 @@ public abstract class BaseAnncaActivity<CameraId> extends AnncaCameraActivity<Ca
 
     @Override
     public void onTakePhotoButtonPressed() {
+        mStartTimestamp = System.currentTimeMillis();
         getCameraController().takePhoto(getOutputDirectory());
     }
 
     @Override
     public void onStartRecordingButtonPressed() {
+        mStartTimestamp = System.currentTimeMillis();
         getCameraController().startVideoRecord(getOutputDirectory());
     }
 
@@ -401,7 +405,10 @@ public abstract class BaseAnncaActivity<CameraId> extends AnncaCameraActivity<Ca
 
     private void startPreviewActivity() {
         Intent intent = PreviewActivity.newIntent(this,
-                getMediaAction(), getCameraController().getOutputFile().toString());
+                                                  getMediaAction(),
+                                                  getCameraController().getOutputFile()
+                                                                       .toString(),
+                                                  mStartTimestamp);
         startActivityForResult(intent, REQUEST_PREVIEW_CODE);
     }
 
@@ -412,6 +419,7 @@ public abstract class BaseAnncaActivity<CameraId> extends AnncaCameraActivity<Ca
                 if (PreviewActivity.isResultConfirm(data)) {
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra(AnncaConfiguration.Arguments.FILE_PATH, PreviewActivity.getMediaFilePatch(data));
+                    resultIntent.putExtra(AnncaConfiguration.Arguments.TIMESTAMP, PreviewActivity.getMediaTimestamp(data));
                     setResult(RESULT_OK, resultIntent);
                     finish();
                 } else if (PreviewActivity.isResultCancel(data)) {

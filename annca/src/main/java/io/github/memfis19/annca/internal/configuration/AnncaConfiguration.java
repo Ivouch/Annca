@@ -55,6 +55,7 @@ public final class AnncaConfiguration {
         String VIDEO_FILE_SIZE = "io.memfis19.annca.camera_video_file_size";
         String FLASH_MODE = "io.memfis19.annca.camera_flash_mode";
         String FILE_PATH = "io.memfis19.annca.camera_video_file_path";
+        String TIMESTAMP = "io.memfis19.annca.camera_timestamp";
     }
 
     @IntDef({MEDIA_QUALITY_AUTO, MEDIA_QUALITY_LOWEST, MEDIA_QUALITY_LOW, MEDIA_QUALITY_MEDIUM, MEDIA_QUALITY_HIGH, MEDIA_QUALITY_HIGHEST})
