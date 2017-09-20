@@ -19,6 +19,7 @@ import io.github.memfis19.annca.internal.ui.view.CameraControlPanel;
 import io.github.memfis19.annca.internal.ui.view.CameraSwitchView;
 import io.github.memfis19.annca.internal.ui.view.FlashSwitchView;
 import io.github.memfis19.annca.internal.ui.view.MediaActionSwitchView;
+import io.github.memfis19.annca.internal.ui.view.PreviewSwitchView;
 import io.github.memfis19.annca.internal.ui.view.RecordButton;
 import io.github.memfis19.annca.internal.utils.Size;
 import io.github.memfis19.annca.internal.utils.Utils;
@@ -34,7 +35,10 @@ public abstract class BaseAnncaActivity<CameraId> extends AnncaCameraActivity<Ca
         RecordButton.RecordButtonListener,
         FlashSwitchView.FlashModeSwitchListener,
         MediaActionSwitchView.OnMediaActionStateChangeListener,
-        CameraSwitchView.OnCameraTypeChangeListener, CameraControlPanel.SettingsClickListener {
+        CameraSwitchView.OnCameraTypeChangeListener, CameraControlPanel.SettingsClickListener,
+        PreviewSwitchView.OnPreviewSettingsChangeListener {
+
+    public @PreviewSwitchView.PreviewSettings int mPreviewSettings = PreviewSwitchView.PREVIEW_ON;
 
     private CameraControlPanel cameraControlPanel;
     private AlertDialog settingsDialog;
@@ -212,6 +216,9 @@ public abstract class BaseAnncaActivity<CameraId> extends AnncaCameraActivity<Ca
             cameraControlPanel.setMaxVideoDuration(getVideoDuration());
             cameraControlPanel.setMaxVideoFileSize(getVideoFileSize());
             cameraControlPanel.setSettingsClickListener(this);
+            cameraControlPanel.setPreviewSettingsChangeListener(this);
+
+            cameraControlPanel.setPreviewSettings(mPreviewSettings);
         }
 
         return cameraControlPanel;
@@ -482,5 +489,10 @@ public abstract class BaseAnncaActivity<CameraId> extends AnncaCameraActivity<Ca
                 newQuality = ((PhotoQualityOption) photoQualities[index]).getMediaQuality();
             }
         };
+    }
+
+    @Override
+    public void onPreviewSettingsChanged(@PreviewSwitchView.PreviewSettings int previewSettings) {
+        mPreviewSettings = previewSettings;
     }
 }

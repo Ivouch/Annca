@@ -13,20 +13,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import java.io.File;
-import java.util.concurrent.TimeUnit;
-
 import io.github.memfis19.annca.R;
 import io.github.memfis19.annca.internal.configuration.AnncaConfiguration;
 import io.github.memfis19.annca.internal.utils.DateTimeUtils;
 
+import java.io.File;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by memfis on 7/6/16.
  */
-public class CameraControlPanel extends RelativeLayout
-        implements RecordButton.RecordButtonListener,
-        MediaActionSwitchView.OnMediaActionStateChangeListener {
+public class CameraControlPanel extends RelativeLayout implements RecordButton.RecordButtonListener,
+                                                                  MediaActionSwitchView
+                                                                    .OnMediaActionStateChangeListener {
 
     private Context context;
 
@@ -34,6 +33,7 @@ public class CameraControlPanel extends RelativeLayout
     private RecordButton recordButton;
     private MediaActionSwitchView mediaActionSwitchView;
     private FlashSwitchView flashSwitchView;
+    private PreviewSwitchView previewSwitchView;
     private TextView recordDurationText;
     private TextView recordSizeText;
     private CameraSettingsView settingsButton;
@@ -42,6 +42,7 @@ public class CameraControlPanel extends RelativeLayout
     private MediaActionSwitchView.OnMediaActionStateChangeListener onMediaActionStateChangeListener;
     private CameraSwitchView.OnCameraTypeChangeListener onCameraTypeChangeListener;
     private FlashSwitchView.FlashModeSwitchListener flashModeSwitchListener;
+    private PreviewSwitchView.OnPreviewSettingsChangeListener previewSettingsChangeListener;
     private SettingsClickListener settingsClickListener;
 
     private TimerTaskBase countDownTimer;
@@ -84,6 +85,7 @@ public class CameraControlPanel extends RelativeLayout
         mediaActionSwitchView = (MediaActionSwitchView) findViewById(R.id.photo_video_camera_switcher);
         recordButton = (RecordButton) findViewById(R.id.record_button);
         flashSwitchView = (FlashSwitchView) findViewById(R.id.flash_switch_view);
+        previewSwitchView = (PreviewSwitchView) findViewById(R.id.preview_settings_switcher);
         recordDurationText = (TextView) findViewById(R.id.record_duration_text);
         recordSizeText = (TextView) findViewById(R.id.record_size_mb_text);
 
@@ -93,6 +95,7 @@ public class CameraControlPanel extends RelativeLayout
         setOnCameraTypeChangeListener(onCameraTypeChangeListener);
         setOnMediaActionStateChangeListener(onMediaActionStateChangeListener);
         setFlashModeSwitchListener(flashModeSwitchListener);
+        setPreviewSettingsChangeListener(previewSettingsChangeListener);
         setRecordButtonListener(recordButtonListener);
         settingsButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -100,6 +103,7 @@ public class CameraControlPanel extends RelativeLayout
                 if (settingsClickListener != null) settingsClickListener.onSettingsClick();
             }
         });
+
 
         if (hasFlash)
             flashSwitchView.setVisibility(VISIBLE);
@@ -113,6 +117,7 @@ public class CameraControlPanel extends RelativeLayout
         recordButton.setEnabled(false);
         settingsButton.setEnabled(false);
         flashSwitchView.setEnabled(false);
+        previewSwitchView.setEnabled(false);
     }
 
     public void unLockControls() {
@@ -120,6 +125,7 @@ public class CameraControlPanel extends RelativeLayout
         recordButton.setEnabled(true);
         settingsButton.setEnabled(true);
         flashSwitchView.setEnabled(true);
+        previewSwitchView.setEnabled(true);
     }
 
     public void setup(int mediaAction) {
@@ -138,6 +144,10 @@ public class CameraControlPanel extends RelativeLayout
 
     public void setFlasMode(@FlashSwitchView.FlashMode int flashMode) {
         flashSwitchView.setFlashMode(flashMode);
+    }
+
+    public void setPreviewSettings(@PreviewSwitchView.PreviewSettings int previewSettings){
+        previewSwitchView.setPreviewSettings(previewSettings);
     }
 
     public void setMediaFilePath(final File mediaFile) {
@@ -177,6 +187,7 @@ public class CameraControlPanel extends RelativeLayout
             cameraSwitchView.setRotation(rotation);
             mediaActionSwitchView.setRotation(rotation);
             flashSwitchView.setRotation(rotation);
+            previewSwitchView.setRotation(rotation);
             recordDurationText.setRotation(rotation);
             recordSizeText.setRotation(rotation);
         }
@@ -196,6 +207,13 @@ public class CameraControlPanel extends RelativeLayout
         this.flashModeSwitchListener = flashModeSwitchListener;
         if (flashSwitchView != null)
             flashSwitchView.setFlashSwitchListener(this.flashModeSwitchListener);
+    }
+
+    public void setPreviewSettingsChangeListener(PreviewSwitchView.OnPreviewSettingsChangeListener listener){
+        previewSettingsChangeListener = listener;
+        if(previewSettingsChangeListener != null){
+            previewSwitchView.setOnPreviewSettingsChangeListener(previewSettingsChangeListener);
+        }
     }
 
     public void setSettingsClickListener(SettingsClickListener settingsClickListener) {
